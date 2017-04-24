@@ -1,6 +1,7 @@
 "use strict"
 
 const processor = require("./pageProcessor.js");
+const pageRetriever = require("./pageRetriever.js");
 
 const Promise = require('bluebird');
 const Queue = require('promise-queue');
@@ -8,7 +9,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
-const winston = require('winston');
+const logger = require('winston');
 const strftime = require('strftime');
 
 //const subrURL = 'https://www.reddit.com/r/boardgames/';
@@ -16,56 +17,25 @@ const strftime = require('strftime');
 
 //let itemQueue = new Queue(5, Infinity);
 
-const getPage = function(url) {
-	return new Promise(function(resolve, reject) { 
-		logger.debug("getSubrPage attempt for " + url);
-		request.get({
-			    url: url
-			}, 
-			function(err, response, body) {
-				logger.debug("getSubrPage Success for " + url);
-				if (!err && response.statusCode == 200) {
-					resolve(cheerio.load(body));
-				} else {
-					reject(err);
-				}
-			}
-		);
-	})
-};
-
-
-const getSubrPage = function(subr, page) {
-	const fullUrl = 'https://www.reddit.com/r/' + subr + 
-					'/?limit=100' + (page=0 ? '' : ('&count=' + ((page - 1) * 100)));
-	return getPage(fullUrl);
-};
-
-
 const tsFormat = () => strftime('%b %d, %Y %H:%M:%S.%L');
-const logger = new (winston.Logger)({
-  transports: [
-    // colorize the output to the console
-    new (winston.transports.Console)({
-      timestamp: tsFormat,
-      colorize: true,
-      level: 'info'
-    }),
-    new (winston.transports.File)({
-      filename: 'activity.log',
-      timestamp: tsFormat,
-      level: 'debug',
-      json: false
-    })
-  ]
+logger.remove(logger.transports.Console);  
+logger.add(logger.transports.Console, {
+  timestamp: tsFormat,
+  colorize: true,
+  level: 'info'
+});
+logger.add(logger.transports.File, {
+  filename: 'activity.log',
+  timestamp: tsFormat,
+  level: 'debug',
+  json: false
 });
 
-getSubrPage('boardgames', 2)
+pageRetriever.getSubrPage('boardgames', 2)
 .then(function($) {
 	const posts = processor.processSubrPage($);
 
 	logger.debug(JSON.stringify(posts));
-
 });
 
 
