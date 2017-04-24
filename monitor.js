@@ -1,5 +1,7 @@
 "use strict"
 
+const processor = require("./pageProcessor.js");
+
 const Promise = require('bluebird');
 const Queue = require('promise-queue');
 const request = require('request');
@@ -40,7 +42,6 @@ const getSubrPage = function(subr, page) {
 };
 
 
-
 const tsFormat = () => strftime('%b %d, %Y %H:%M:%S.%L');
 const logger = new (winston.Logger)({
   transports: [
@@ -59,21 +60,9 @@ const logger = new (winston.Logger)({
   ]
 });
 
-
-
 getSubrPage('boardgames', 2)
 .then(function($) {
-	let posts = [];
-
-	$('.thing').each(function (i, elem) {
-		let post = {
-			score : $(this).find('.score.unvoted').text(),
-			title : $(this).find('.title').text(),
-			link : $(this).find('.first > a').attr('href')
-		};
-
-		posts[i] = post;
-	});
+	const posts = processor.processSubrPage($);
 
 	logger.debug(JSON.stringify(posts));
 
