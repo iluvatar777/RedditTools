@@ -15,4 +15,14 @@ const processSubrPage = function($) {
 	return posts;
 };
 
+const processCommentsPage = function($) {
+	let post = {
+		//score : $(this).find('.score.unvoted').text(),
+		//title : $(this).find('.title').text(),
+		//link : $(this).find('.first > a').attr('href'),
+		//fullname : $(this).data('fullname')
+	};
+	return post;
+};
+
 exports.processSubrPage = processSubrPage;

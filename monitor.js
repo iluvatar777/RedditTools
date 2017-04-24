@@ -12,10 +12,7 @@ const path = require('path');
 const logger = require('winston');
 const strftime = require('strftime');
 
-//const subrURL = 'https://www.reddit.com/r/boardgames/';
-
-
-//let itemQueue = new Queue(5, Infinity);
+let commentsPageQueue = new Queue(10, Infinity);
 
 const tsFormat = () => strftime('%b %d, %Y %H:%M:%S.%L');
 logger.remove(logger.transports.Console);  
@@ -31,12 +28,30 @@ logger.add(logger.transports.File, {
   json: false
 });
 
+
 pageRetriever.getSubrPage('boardgames', 2)
 .then(function($) {
 	const posts = processor.processSubrPage($);
-
 	logger.debug(JSON.stringify(posts));
-});
+
+	for (let i = 0; i < posts.length; i++) {
+		const post = posts[i];
+
+		commentsPageQueue.add(function() {
+			logger.debug('Adding to commentsPageQueue: ' + post.fullname);
+			return getCommentsPage(post.fullname);
+		})
+		.then(function(post$) {
+			const postObj = processor.processCommentPage(post$);
+
+			logger.debug(postObj);
+		});
+	};
+
+}).
+then() {
+	
+}
 
 
 /*
