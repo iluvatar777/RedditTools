@@ -13,10 +13,10 @@ const getPage = function(url) {
 			}, 
 			function(err, response, body) {
 				if (!err && response.statusCode == 200) {
-					logger.debug("getSubrPage Success for " + url);
+					logger.debug("getPage Success for " + url);
 					resolve(cheerio.load(body));
 				} else {
-					logger.debug("getSubrPage Failure for " + url);
+					logger.debug("getPage Failure for " + url + '\n     ' + response.statusCode + ' ' + response.statusLine);
 					reject(err);
 				}
 			}
@@ -30,9 +30,9 @@ const getSubrPage = function(subr, page) {
 	return getPage(fullUrl);
 };
 
-const getCommentsPage = function(fullname) {
-	fullname = (fullname.substring(0,3) = 't3_' ? fullname.substring(3) : fullname)
-	const fullUrl = 'https://www.reddit.com/r/worldnews/comments/' + fullname
+const getCommentsPage = function(subr, fullname) {
+	fullname = (fullname.substring(0,3) == 't3_' ? fullname.substring(3) : fullname)
+	const fullUrl = 'https://www.reddit.com/r/' + subr + '/comments/' + fullname
 	return getPage(fullUrl);
 };
 

@@ -12,8 +12,14 @@ const path = require('path');
 const logger = require('winston');
 const strftime = require('strftime');
 
+
 let commentsPageQueue = new Queue(10, Infinity);
 
+let queueMonitor = '';
+let queueMonitorCount = 0;
+
+
+// Initialize default Winston logger. Other modules can just use default logger. TODO move to standalone file
 const tsFormat = () => strftime('%b %d, %Y %H:%M:%S.%L');
 logger.remove(logger.transports.Console);  
 logger.add(logger.transports.Console, {
@@ -28,8 +34,24 @@ logger.add(logger.transports.File, {
   json: false
 });
 
+// called on interval.
+const checkQueues = function() {
+	queueMonitorCount += 1 ;
+	const cpQ = commentsPageQueue.getQueueLength();
+	const cpP = commentsPageQueue.getPendingLength();
 
-pageRetriever.getSubrPage('boardgames', 2)
+	((queueMonitorCount % 10 == 0) ? logger.info : logger.debug)('QueueMonitor ' + queueMonitorCount + ': commentsPageQueue ' + cpP + '/' + cpQ);
+
+	if (cpQ + cpP == 0) {
+		logger.info('Queues are empty, stopping queue monitor');
+		clearInterval(queueMonitor);
+	}
+};
+
+
+const subr = 'boardgames';
+
+pageRetriever.getSubrPage(subr, 2)
 .then(function($) {
 	const posts = processor.processSubrPage($);
 	logger.debug(JSON.stringify(posts));
@@ -39,19 +61,24 @@ pageRetriever.getSubrPage('boardgames', 2)
 
 		commentsPageQueue.add(function() {
 			logger.debug('Adding to commentsPageQueue: ' + post.fullname);
-			return getCommentsPage(post.fullname);
+			return pageRetriever.getCommentsPage(subr, post.fullname); 
 		})
-		.then(function(post$) {
-			const postObj = processor.processCommentPage(post$);
+		.then(function($post) {
+			const postObj = processor.processCommentsPage($post);
 
-			logger.debug(postObj);
+			logger.debug(JSON.stringify(postObj));
+		})				
+		.catch(function(err) {
+			logger.warn("commentsPageQueue Error: " + err);
 		});
 	};
 
-}).
-then() {
-	
-}
+})
+.then(function() {
+	logger.info('Starting Queue Monitor');
+	queueMonitor = setInterval(checkQueues, 100); // TODO decide how often to ping
+});
+
 
 
 /*
