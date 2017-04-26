@@ -7,17 +7,17 @@ const logger = require('winston');
 
 const getPage = function(url) {
 	return new Promise(function(resolve, reject) { 
-		logger.debug("getPage attempt for " + url);
+		logger.verbose("getPage attempt for " + url);
 		request.get({
 			    url: url
 			}, 
 			function(err, response, body) {
 				if (!err && response.statusCode == 200) {
-					logger.debug("getPage Success for " + url);
+					logger.verbose("getPage Success for " + url);
 					resolve(cheerio.load(body));
 				} else {
-					logger.debug("getPage Failure for " + url + '\n     ' + response.statusCode + ' ' + response.statusLine);
-					reject(err);
+					logger.warn('getPage Failure (' + response.statusCode + ')  + for ' +  url);
+					reject(response);
 				}
 			}
 		);

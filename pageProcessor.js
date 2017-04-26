@@ -21,7 +21,7 @@ const processCommentsPage = function($) {
 	const now = Date.now();
 
 	const score = parseInt($('.score').find('.number').text())
-	const percentUp = parseInt($('.score').text().split('%')[0].split('(')[1])
+	const percentUp = parseInt($('.score').text().split('%')[0].split('(')[1])  // TODO deal with score = 0. can't know how many votes
 	const up = Math.round(score / (2 * percentUp / 100 - 1));
 
 	const post = {
