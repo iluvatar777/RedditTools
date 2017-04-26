@@ -40,7 +40,7 @@ const checkQueues = function() {
 	const cpQ = commentsPageQueue.getQueueLength();
 	const cpP = commentsPageQueue.getPendingLength();
 
-	((queueMonitorCount % 10 == 0) ? logger.info : logger.debug)('QueueMonitor ' + queueMonitorCount + ': commentsPageQueue ' + cpP + '/' + cpQ);
+	((queueMonitorCount % 50 == 0) ? logger.info : logger.debug)('QueueMonitor ' + queueMonitorCount + ': commentsPageQueue ' + cpP + '/' + cpQ);
 
 	if (cpQ + cpP == 0) {
 		logger.info('Queues are empty, stopping queue monitor');
