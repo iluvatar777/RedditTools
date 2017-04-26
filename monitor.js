@@ -6,10 +6,7 @@ const pageRetriever = require("./pageRetriever.js");
 
 const Promise = require('bluebird');
 const Queue = require('promise-queue');
-const request = require('request');
 const cheerio = require('cheerio');
-const fs = require('fs');
-const path = require('path');
 
 
 let commentsPageQueue = new Queue(10, Infinity);
