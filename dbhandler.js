@@ -47,12 +47,8 @@ const query = function(sql) {
 	});
 };
 
-exports.initConnectionPool = initConnectionPool;
-exports.closeConnectionPool = closeConnectionPool;
-exports.query = query;
-
 const test = function() {
-	initConnectionPool();									// TODO use Promise.using
+	initConnectionPool();
 
 	query('SELECT 1 + 1 AS solution')
 	.then(function(rows, fields) {
@@ -67,4 +63,8 @@ const test = function() {
 
 };
 
-test();
+
+exports.initConnectionPool = initConnectionPool;
+exports.closeConnectionPool = closeConnectionPool;
+exports.query = query;
+exports.test = test;
