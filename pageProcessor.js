@@ -28,13 +28,15 @@ const processCommentsPage = function($) {
 		score : score,					
 		up : up,													// score = up - down
 		down : up - score,											// redundant - score and percentUp are the raw data.
-		percentUp: percentUp,										
-		author: $('.entry').first().find('a.author').text(),
-		title: $('a.title').text(),
-		domain: $('.domain').find('a').text(),
-		comments: $('.bylink.comments').text().split(' ')[0],
+		percentUp : percentUp,										
+		author : $('.entry').first().find('a.author').text(),
+		title : $('a.title').text(),
+		domain : $('.domain').find('a').text(),
+		comments : $('.bylink.comments').text().split(' ')[0],
 		sSincePost : Math.floor((now - submitTime) / 1000),
-		time : now
+		time : now,
+		isNSFW : ($('.entry').find('.nsfw-stamp.stamp').length > 0),
+		isSpoiler : ($('.entry').find('.spoiler-stamp.stamp').length >0)
 	};
 	return post;
 };
