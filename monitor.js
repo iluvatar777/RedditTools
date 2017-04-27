@@ -52,7 +52,7 @@ pageRetriever.getSubrPage(subr, 2)
 			logger.debug(JSON.stringify(postObj));
 		})				
 		.catch(function(response) {
-			logger.warn("commentsPageQueue Error: " + JSON.tostring(response));
+			logger.warn("commentsPageQueue Error: " + JSON.stringify(response));
 		});
 	};
 
