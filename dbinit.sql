@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS post (
 	title varchar(255),
 	domain varchar(255),
 	isNSFW boolean,
+	isSpoiler boolean,
 	firstProcessed timestamp,
 	CONSTRAINT PK_post PRIMARY KEY (fullname)
 );
