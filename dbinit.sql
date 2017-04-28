@@ -26,3 +26,27 @@ CREATE TABLE IF NOT EXISTS postData (
 	CONSTRAINT PK_postData PRIMARY KEY (fullname, sSincePost),
 	FOREIGN KEY (fullname) REFERENCES post(fullname)
 );
+
+DELIMITER //
+CREATE OR UPDATE PROCEDURE IF NOT EXISTS CommentPageInsert (		
+		IN fullname varchar(15),
+		IN subreddit varchar(255),		# post only
+		IN author varchar(255), 
+		IN title varchar(255),
+		IN domain varchar(255),
+		IN isNSFW boolean,
+		IN isSpoiler boolean,
+	#	firstProcessed timestamp,
+		IN processTime timestamp,		# postData
+	#	sSincePost int,
+		IN score int,
+		IN up int,
+		IN down int,
+		IN percentUp int,
+		IN comments int,
+		OUT output varchar(255)
+	)
+	BEGIN
+		SELECT subreddit INTO @output;
+	END //
+DELIMITER ;
