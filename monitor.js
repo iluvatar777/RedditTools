@@ -6,12 +6,12 @@ const pageRetriever = require("./pageRetriever.js");
 const db = require("./dbhandler.js");
 
 const Promise = require('bluebird');
-const Queue = require('promise-queue');
+//const Queue = require('promise-queue');
 const cheerio = require('cheerio');
 const arrayUnion = require('array-union');
 
 
-let postQueue = new Queue(10, Infinity);
+/*let postQueue = new Queue(10, Infinity);
 
 
 let queueMonitor = '';
@@ -33,7 +33,7 @@ const checkQueues = function() {
 
 		db.closeConnectionPool();			// TODO connection should not be managed here
 	}
-};
+};*/
 
 // given a subreddit, retrieves list of hot, new, and [TODO] monitored post fullnames
 const retrieveSubr = function(subr) {
@@ -50,16 +50,18 @@ const retrieveSubr = function(subr) {
 // given a post fulllname, retrieves, processes and INSERTs to db
 // uses a queue to manage concurrency
 const processPost = function(subr, fullname) {
-	return postQueue.add(function() {
+	/*return postQueue.add(function() {
 		logger.verbose('Adding to postQueue: ' + subr + '/' + fullname);
 		return pageRetriever.getPostPage(subr, fullname); 
-	})
+	})*/
+	return pageRetriever.getPostPage(subr, fullname)
 	.then(function($post) {
 		const postObj = processor.processPostPage($post);
 		logger.debug(JSON.stringify(postObj));
 
 		return db.postResultInsert(postObj);
 	})
+	.timeout(60000)
 	.then(function(rows, fields) {
 		logger.debug("Insert success"); //  rows: " + JSON.stringify(rows));
 	})				
@@ -69,20 +71,28 @@ const processPost = function(subr, fullname) {
 
 };
 
-
+// given a subreddit, find post, retrieve, process, and INSERT them to db.
 const processSub = function(subr) {
 	db.initConnectionPool();			// TODO connection should not be managed here
 
 	return retrieveSubr(subr)
-	.then(function(posts) {
+	/*.then(function(posts) {
 		for (let i = 0; i < posts.length; i++) {								//TODO replace with .map() with concurrency
 			processPost(subr, posts[i])
 		};
+	});*/
+	.map(function(post) {
+		//logger.info('Starting Queue Monitor');				// TODO this is real bad
+		//queueMonitor = setInterval(checkQueues, 1000);
+		return processPost(subr, post);
+	}, {concurrency : 15}
+	)
+	.finally(function() {
+		db.closeConnectionPool();
+	}); // TODO connection should not be managed here
 
-		logger.info('Starting Queue Monitor');
-		queueMonitor = setInterval(checkQueues, 1000); 
-	});
 };
+
 
 const subr = 'boardgames';
 
