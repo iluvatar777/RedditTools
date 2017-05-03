@@ -3,6 +3,7 @@
 const logger = require('./logger.js');
 const processor = require("./pageProcessor.js");
 const pageRetriever = require("./pageRetriever.js");
+const db = require("./dbhandler.js");
 
 const Promise = require('bluebird');
 const Queue = require('promise-queue');
@@ -29,6 +30,8 @@ const checkQueues = function() {
 	if (cpQ + cpP == 0) {
 		logger.info('Queues are empty, stopping queue monitor');
 		clearInterval(queueMonitor);
+
+		db.closeConnectionPool();			// TODO connection should not be managed here
 	}
 };
 
@@ -43,12 +46,14 @@ const retrieveSubr = function(subr) {
 	})
 };
 
+const subr = 'StarWars';
 
-const subr = 'hockey';
+const processSub = function(subr) {};
 
-return retrieveSubr(subr)
+retrieveSubr(subr)
 .then(function(posts) {
-	for (let i = 0; i < posts.length; i++) {
+
+	for (let i = 0; i < posts.length; i++) {								//TODO replace with .map() with concurrency
 		const post = posts[i];
 
 		commentsPageQueue.add(function() {
@@ -57,15 +62,17 @@ return retrieveSubr(subr)
 		})
 		.then(function($post) {
 			const postObj = processor.processCommentsPage($post);
-
 			logger.debug(JSON.stringify(postObj));
+
+			return db.commentsResultInsert(postObj);
+		})
+		.then(function(rows, fields) {
+			logger.debug("Insert success");
 		})				
 		.catch(function(response) {
 			logger.warn("commentsPageQueue Error: " + JSON.stringify(response));
 		});
 	};
-})
-.then(function() {
 	logger.info('Starting Queue Monitor');
 	queueMonitor = setInterval(checkQueues, 100); // TODO decide how often to ping
-});
+})

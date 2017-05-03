@@ -14,16 +14,20 @@ const initConnectionPool = function() {
 
 	logger.info('Creating db connection pool');
 	pool = mysql.createPool({
-	  connectionLimit : 10,
-	  host            : 'localhost',
-	  user            : 'root'
-	  //password        : 'datasoft123'
+		connectionLimit : 10,
+		host : 'localhost',
+		user : 'root'
+		//password : 'datasoft123'
+	});
+
+	pool.on('connection', function (connection) {
+		connection.query('USE RedditTools')
 	});
 };
 
 const closeConnectionPool = function() {					// TODO not clean
 	if (pool === '') {
-		logger.init('Db connection pool not initialized for closing');
+		logger.info('Db connection pool not initialized for closing');
 		return;
 	};
 	logger.info('Closing db connection');
@@ -32,13 +36,14 @@ const closeConnectionPool = function() {					// TODO not clean
 	pool = '';
 };
 
-const query = function(sql) {
+const query = function(sql, params) {
 	return new Promise(function(resolve, reject) {
 		if (pool === '') {
 			reject('Query error - Db connection pool not initialized'); // TODO make js error?
 		};
 
-		pool.query(sql, function(err, rows, fields) {
+		logger.debug("Query: " + sql + "\n  Query params: " + JSON.stringify(params));
+		pool.query(sql, params, function(err, rows, fields) {
   			if (err) reject(err);
 
   			resolve(rows, fields);
@@ -47,10 +52,37 @@ const query = function(sql) {
 	});
 };
 
+
+const commentsResultInsert = function(commentPage){
+	const sql = "CALL CommentPageInsert(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";		// TODO doesn't seem to handle null... e.g. percentup=50
+	//"sSincePost":97808,"time":1493757988723
+
+	const params = [
+		commentPage.fullname,
+		commentPage.subreddit,
+		commentPage.author,
+		commentPage.title,
+		commentPage.domain,
+		commentPage.isNSFW,
+		commentPage.isSpoiler,
+
+		commentPage.time,
+		commentPage.sSincePost,
+
+		commentPage.score,
+		commentPage.up,
+		commentPage.down,
+		commentPage.percentUp,
+		commentPage.comments
+	];
+
+	return query(sql, params)
+}
+
 const test = function() {
 	initConnectionPool();
 
-	query('SELECT 1 + 1 AS solution')
+	query('SELECT ? + ? AS solution', [4,5])
 	.then(function(rows, fields) {
 		logger.info('test succeeded. rows:' + JSON.stringify(rows));
 	})
@@ -63,8 +95,10 @@ const test = function() {
 
 };
 
+initConnectionPool();  // TODO move this elsewhere
 
 exports.initConnectionPool = initConnectionPool;
 exports.closeConnectionPool = closeConnectionPool;
+exports.commentsResultInsert = commentsResultInsert;
 exports.query = query;
 exports.test = test;
