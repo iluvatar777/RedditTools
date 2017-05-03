@@ -42,7 +42,8 @@ const query = function(sql, params) {
 			reject('Query error - Db connection pool not initialized'); // TODO make js error?
 		};
 
-		logger.debug("Query: " + sql + "\n  Query params: " + JSON.stringify(params));
+
+		logger.debug("Query: " + sql + "  Params: " + JSON.stringify(params));
 		pool.query(sql, params, function(err, rows, fields) {
   			if (err) reject(err);
 

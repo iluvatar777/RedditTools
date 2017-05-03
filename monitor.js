@@ -20,7 +20,7 @@ let queueMonitorCount = 0;
 // called on interval.
 const checkQueues = function() {
 	queueMonitorCount += 1 ;
-	const level = (queueMonitorCount % 50 == 0) ? 'info' : 'debug';
+	const level = (queueMonitorCount % 50 == 0) ? 'info' : 'silly';
 
 	const cpQ = commentsPageQueue.getQueueLength();
 	const cpP = commentsPageQueue.getPendingLength();
@@ -74,7 +74,7 @@ const processSub = function(subr) {
 			});
 		};
 		logger.info('Starting Queue Monitor');
-		queueMonitor = setInterval(checkQueues, 100); // TODO decide how often to ping
+		queueMonitor = setInterval(checkQueues, 1000); // TODO decide how often to ping
 	});
 };
 
