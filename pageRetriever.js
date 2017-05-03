@@ -16,7 +16,7 @@ const getPage = function(url) {
 					logger.verbose("getPage Success for " + url);
 					resolve(cheerio.load(body));
 				} else {
-					logger.warn('getPage Failure (' + response.statusCode + ')  + for ' +  url);
+					logger.warn('getPage Failure (' + err + ')  + for ' +  url);
 					reject(response);
 				}
 			}

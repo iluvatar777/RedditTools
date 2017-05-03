@@ -46,33 +46,40 @@ const retrieveSubr = function(subr) {
 	})
 };
 
-const subr = 'StarWars';
 
-const processSub = function(subr) {};
+const processSub = function(subr) {
+	db.initConnectionPool();			// TODO connection should not be managed here
 
-retrieveSubr(subr)
-.then(function(posts) {
+	return retrieveSubr(subr)
+	.then(function(posts) {
 
-	for (let i = 0; i < posts.length; i++) {								//TODO replace with .map() with concurrency
-		const post = posts[i];
+		for (let i = 0; i < posts.length; i++) {								//TODO replace with .map() with concurrency
+			const post = posts[i];
 
-		commentsPageQueue.add(function() {
-			logger.verbose('Adding to commentsPageQueue: ' + post);
-			return pageRetriever.getCommentsPage(subr, post); 
-		})
-		.then(function($post) {
-			const postObj = processor.processCommentsPage($post);
-			logger.debug(JSON.stringify(postObj));
+			commentsPageQueue.add(function() {
+				logger.verbose('Adding to commentsPageQueue: ' + post);
+				return pageRetriever.getCommentsPage(subr, post); 
+			})
+			.then(function($post) {
+				const postObj = processor.processCommentsPage($post);
+				logger.debug(JSON.stringify(postObj));
 
-			return db.commentsResultInsert(postObj);
-		})
-		.then(function(rows, fields) {
-			logger.debug("Insert success");
-		})				
-		.catch(function(response) {
-			logger.warn("commentsPageQueue Error: " + JSON.stringify(response));
-		});
-	};
-	logger.info('Starting Queue Monitor');
-	queueMonitor = setInterval(checkQueues, 100); // TODO decide how often to ping
-})
+				return db.commentsResultInsert(postObj);
+			})
+			.then(function(rows, fields) {
+				logger.debug("Insert success");
+			})				
+			.catch(function(response) {
+				logger.warn("commentsPageQueue Error: " + JSON.stringify(response));
+			});
+		};
+		logger.info('Starting Queue Monitor');
+		queueMonitor = setInterval(checkQueues, 100); // TODO decide how often to ping
+	});
+};
+
+const subr = 'boardgames';
+
+processSub(subr);
+
+setInterval(processSub, 300000, subr);
