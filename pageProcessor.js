@@ -18,7 +18,7 @@ const processSubrPage = function($) {
 	return posts;
 };
 
-const processCommentsPage = function($) {
+const processPostPage = function($) {
 
 	const submitTime = + new Date($('.date').find('time').attr('datetime'));
 	const now = Date.now();
@@ -49,4 +49,4 @@ const processCommentsPage = function($) {
 };
 
 exports.processSubrPage = processSubrPage;
-exports.processCommentsPage = processCommentsPage;
+exports.processPostPage = processPostPage;

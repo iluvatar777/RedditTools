@@ -54,27 +54,27 @@ const query = function(sql, params) {
 };
 
 
-const commentsResultInsert = function(commentPage){
+const postResultInsert = function(postPage){
 	const sql = "CALL CommentPageInsert(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";		// TODO doesn't seem to handle null... e.g. percentup=50
 	//"sSincePost":97808,"time":1493757988723
 
 	const params = [
-		commentPage.fullname,
-		commentPage.subreddit,
-		commentPage.author,
-		commentPage.title,
-		commentPage.domain,
-		commentPage.isNSFW,
-		commentPage.isSpoiler,
+		postPage.fullname,
+		postPage.subreddit,
+		postPage.author,
+		postPage.title,
+		postPage.domain,
+		postPage.isNSFW,
+		postPage.isSpoiler,
 
-		commentPage.time,
-		commentPage.sSincePost,
+		postPage.time,
+		postPage.sSincePost,
 
-		commentPage.score,
-		commentPage.up,
-		commentPage.down,
-		commentPage.percentUp,
-		commentPage.comments
+		postPage.score,
+		postPage.up,
+		postPage.down,
+		postPage.percentUp,
+		postPage.comments
 	];
 
 	return query(sql, params)
@@ -100,6 +100,6 @@ initConnectionPool();  // TODO move this elsewhere
 
 exports.initConnectionPool = initConnectionPool;
 exports.closeConnectionPool = closeConnectionPool;
-exports.commentsResultInsert = commentsResultInsert;
+exports.postResultInsert = postResultInsert;
 exports.query = query;
 exports.test = test;

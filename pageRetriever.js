@@ -37,7 +37,7 @@ const getSubrPage = function(subr, page, sort) {
 	return getPage(fullUrl);
 };
 
-const getCommentsPage = function(subr, fullname) {
+const getPostPage = function(subr, fullname) {
 	fullname = (fullname.substring(0,3) == 't3_' ? fullname.substring(3) : fullname)
 	const fullUrl = 'https://www.reddit.com/r/' + subr + '/comments/' + fullname
 	return getPage(fullUrl);
@@ -45,4 +45,4 @@ const getCommentsPage = function(subr, fullname) {
 
 exports.getPage = getPage;
 exports.getSubrPage = getSubrPage;
-exports.getCommentsPage = getCommentsPage;
+exports.getPostPage = getPostPage;
