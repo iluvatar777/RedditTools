@@ -24,7 +24,7 @@ const processPostPage = function($) {
 	const now = Date.now();
 	const nowM = moment().format();
 
-
+	//const totalVotes = parseInt($('.totalvotes').find('.number').text());		// This appears to only work when logged in
 	const score = parseInt($('.score').find('.number').text())
 	const percentUp = parseInt($('.score').text().split('%')[0].split('(')[1])  // TODO deal with score = 0. can't know how many votes
 	const up = Math.round(score / (2 * percentUp / 100 - 1));

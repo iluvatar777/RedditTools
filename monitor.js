@@ -6,7 +6,6 @@ const pageRetriever = require("./pageRetriever.js");
 const db = require("./dbhandler.js");
 
 const Promise = require('bluebird');
-const cheerio = require('cheerio');
 const arrayUnion = require('array-union');
 
 
@@ -52,9 +51,9 @@ const processSub = function(subr) {
 	}, {concurrency : 15}
 	)
 	.finally(function() {
-		db.closeConnectionPool();
-	}); // TODO connection should not be managed here
-
+		logger.verbose('Finished prosessing sub /r/' + subr);
+		db.closeConnectionPool(); // TODO connection should not be managed here
+	}); 
 };
 
 
