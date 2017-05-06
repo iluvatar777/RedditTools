@@ -8,6 +8,7 @@
     "bluebird": "^3.5.0",
     "cheerio": "^0.22.0",
     "moment": "^2.18.1",
+    "mysql": "^2.13.0",
     "request": "^2.81.0",
     "strftime": "^0.10.0",
     "winston": "^2.3.1"
