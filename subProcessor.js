@@ -50,7 +50,6 @@ const processSub = function(subr) {
 	)
 	.finally(function() {
 		logger.verbose('Finished prosessing sub /r/' + subr);
-		db.closeConnectionPool(); // TODO connection should not be managed here
 	}); 
 };
 
