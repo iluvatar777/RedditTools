@@ -39,7 +39,7 @@ const processPostPage = function($) {
 		author : $('.thing').first().data('author'), //$('.entry').first().find('a.author').text(),
 		title : $('a.title').text(),
 		domain : $('.thing').first().data('domain'), // $('.domain').find('a').text(),
-		comments : parseInt($('.bylink.comments').text().split(' ')[0]),
+		comments : parseInt(+$('.bylink.comments').text().split(' ')[0] || 0),
 		sSincePost : Math.floor((now - submitTime) / 1000),
 		time : nowM,
 		isNSFW : ($('.entry').find('.nsfw-stamp.stamp').length > 0),
