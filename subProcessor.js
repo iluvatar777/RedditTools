@@ -1,6 +1,6 @@
 "use strict"
 
-const logger = require('./logger.js');
+const logger = require('winston');
 const processor = require("./pageProcessor.js");
 const pageRetriever = require("./pageRetriever.js");
 const db = require("./dbhandler.js");
@@ -16,7 +16,7 @@ const retrieveSubr = function(subr) {
 		pageRetriever.getSubrPage(subr, 1, 'new'),
 		function($hot, $new) {
 			const posts = arrayUnion(processor.processSubrPage($hot), (processor.processSubrPage($new)));
-			logger.verbose('Finished retrieving /r/' + subr + '. ' + posts.length + ' unique posts');
+			logger.debug('Finished retrieving /r/' + subr + '. ' + posts.length + ' unique posts');
 			return posts;
 	})
 };
@@ -33,23 +33,24 @@ const processPost = function(subr, fullname) {
 	})
 	.timeout(60000)
 	.then(function(rows, fields) {
-		logger.debug("Insert success"); //  rows: " + JSON.stringify(rows));
+		logger.debug('Insert success'); //  rows: " + JSON.stringify(rows));
 	})				
 	.catch(function(response) {
-		logger.warn("postQueue Error: " + JSON.stringify(response));
+		logger.warn('postQueue Error: ' + JSON.stringify(response));
 	});
 
 };
 
 // given a subreddit, find post, retrieve, process, and INSERT them to db.
 const processSub = function(subr) {
+	logger.verbose('subProcessor processing /r/' + subr);
 	return retrieveSubr(subr)
 	.map(function(post) {
 		return processPost(subr, post);
 	}, {concurrency : 15}
 	)
 	.finally(function() {
-		logger.verbose('Finished prosessing sub /r/' + subr);
+		logger.verbose('subProcessor finished prosessing sub /r/' + subr);
 	}); 
 };
 

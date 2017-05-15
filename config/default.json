@@ -1,0 +1,15 @@
+{
+  // Customer module configs 
+  "subreddits": [
+    "hockey",
+    "boardgames",
+    "aww"
+  ],
+  "Monitor" : {
+    "cycleTime" : 900
+  },
+  "Logger" : {
+    "consoleLevel" : "verbose",
+    "fileLevel" : "debug"
+  }
+}

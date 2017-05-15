@@ -7,13 +7,13 @@ const logger = require('winston');
 
 const getPage = function(url) {
 	return new Promise(function(resolve, reject) { 
-		logger.verbose("getPage attempt for " + url);
+		logger.debug("getPage attempt for " + url);
 		request.get({
 			    url: url
 			}, 
 			function(err, response, body) {
 				if (!err && response.statusCode == 200) {
-					logger.verbose("getPage Success for " + url);
+					logger.debug("getPage Success for " + url);
 					resolve(cheerio.load(body));
 				} else {
 					logger.warn('getPage Failure (' + err + ')  + for ' +  url);
