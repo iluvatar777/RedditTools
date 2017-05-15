@@ -12,19 +12,15 @@ const offset = cycleTime / subCount;
 
 logger.info("Starting monitor. subCount: " + subCount + ', offset: ' + offset);
 
-const simpleProcess = function() {
-	logger.info("simpleProcess");
+const process = function() {
+	logger.info("Beginning main processing loop");
 	for (let i = 0; i < subCount; i++) {
 		setTimeout(sub.processSub, i * offset * 1000, subs[i])
 	}
-	//sub.processSub('boardgames')
-	//setTimeout(sub.processSub, 5 * 60 * 1000, 'hockey')
-	//setTimeout(sub.processSub, 10 * 60 * 1000, 'aww')
 };
 
-simpleProcess();
+process();
+setInterval(process, cycleTime * 1000);
 
-setInterval(simpleProcess, cycleTime * 1000);
-
-// TODO when shutting down...
+//	TODO when shutting down...
 //	db.closeConnectionPool(); // TODO connection should not be managed here
