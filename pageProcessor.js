@@ -33,8 +33,8 @@ const processPostPage = function($) {
 		fullname : $('.thing').first().data('fullname'),
 		subreddit : $('.thing').first().data('subreddit'),
 		score : score,					
-		up : up,													// score = up - down
-		down : up - score,											// redundant - score and percentUp are the raw data.
+		up : up || 'NULL',													// score = up - down
+		down : (up - score) || 'NULL',											// redundant - score and percentUp are the raw data.
 		percentUp : percentUp,										
 		author : $('.thing').first().data('author'), //$('.entry').first().find('a.author').text(),
 		title : $('a.title').text(),
