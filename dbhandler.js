@@ -31,7 +31,7 @@ const closeConnectionPool = function() {					// TODO not clean
 		return;
 	};
 	logger.info('Closing db connection');
-	pool.end();  
+	pool.end();
 
 	pool = '';
 };
@@ -43,12 +43,12 @@ const query = function(sql, params) {
 		};
 
 
-		logger.debug("Query: " + sql + "  Params: " + JSON.stringify(params));
+		logger.debug("Query: " + sql + " Params: " + JSON.stringify(params));
 		pool.query(sql, params, function(err, rows, fields) {
-  			if (err) reject(err);
+				if (err) reject(err);
 
-  			resolve(rows, fields);
-  		});
+				resolve(rows, fields);
+			});
 
 	});
 };
@@ -96,7 +96,7 @@ const test = function() {
 
 };
 
-initConnectionPool();  // TODO move this elsewhere
+initConnectionPool();	// TODO move this elsewhere
 
 exports.initConnectionPool = initConnectionPool;
 exports.closeConnectionPool = closeConnectionPool;

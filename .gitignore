@@ -3,3 +3,4 @@ activity.log
 logs/*
 node_modules/*
 db/*
+local.js
