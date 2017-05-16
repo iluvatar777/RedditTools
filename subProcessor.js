@@ -8,6 +8,10 @@ const db = require("./dbhandler.js");
 const Promise = require('bluebird');
 const arrayUnion = require('array-union');
 
+const config = require('config');
+const httpTimeout = config.get('httpTimeout');
+const dbTimeout = config.get('dbTimeout');
+
 
 // given a subreddit, retrieves list of hot, new, and [TODO] monitored post fullnames
 const retrieveSubr = function(subr) {
@@ -24,19 +28,22 @@ const retrieveSubr = function(subr) {
 // given a post fulllname, retrieves, processes and INSERTs to db
 // uses a queue to manage concurrency
 const processPost = function(subr, fullname) {
-	return pageRetriever.getPostPage(subr, fullname)
+	return pageRetriever.getPostPage(subr, fullname).timeout(httpTimeout, 'pageRetriever for ' + fullname + ' timed out') 
+	.catch(Promise.TimeoutError, function(err) {
+		logger.verbose(err + '  Retrying...');
+		return pageRetriever.getPostPage(subr, fullname).timeout(httpTimeout, 'pageRetriever retry for ' + fullname + ' timed out')
+	})
 	.then(function($post) {
 		const postObj = processor.processPostPage($post);
 		logger.debug(JSON.stringify(postObj));
 
 		return db.postResultInsert(postObj);
-	})
-	.timeout(60000)
-	.then(function(rows, fields) {
-		logger.debug('Insert success'); //  rows: " + JSON.stringify(rows));
+	}).timeout(dbTimeout, ['db timeout for ' + fullname])
+	.then(function(result) {
+		logger.debug('Insert success: ' + result.handle); //  rows: " + JSON.stringify(rows));
 	})				
-	.catch(function(response) {
-		logger.warn('postQueue Error: ' + JSON.stringify(response));
+	.catch(function(err) {
+		logger.error('ProcessPost Error: ' + err);
 	});
 
 };

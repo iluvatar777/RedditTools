@@ -1,5 +1,7 @@
 {
 	// Customer module configs 
+  "httpTimeout" : 60000,
+  "dbTimeout" : 10000,
 	"subreddits": [
 		"hockey",
 		"boardgames",

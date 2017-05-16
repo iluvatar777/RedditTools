@@ -13,11 +13,12 @@ const getPage = function(url) {
 			}, 
 			function(err, response, body) {
 				if (!err && response.statusCode == 200) {
+					const O = cheerio.load(body);					// this could be confusing with timouts in the main promise chain
 					logger.debug("getPage Success for " + url);
-					resolve(cheerio.load(body));
+					resolve(O);
 				} else {
 					logger.warn('getPage Failure (' + err + ')  + for ' +  url);
-					reject(response);
+					reject(err);
 				}
 			}
 		);
