@@ -13,5 +13,8 @@
 	"Logger" : {
 		"consoleLevel" : "verbose",
 		"fileLevel" : "debug"
-	}
+	},
+  "Server" : {
+    "port" : 8088
+  }
 }
