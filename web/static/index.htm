@@ -9,7 +9,14 @@
 	<script src="Chart.js"></script>
 </head>
 
-<body>
-	<canvas id="myChart" width="800" height="600"></canvas>
+<body>	
+	<div id="left">
+		<select name="series" id="series" onChange="loadChart(this.value);">
+		</select>
+	</div>
+
+
+	<canvas id="myChart" width="1200" height="750"></canvas>
+
 </body>
 </html>

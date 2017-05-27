@@ -1,0 +1,11 @@
+#left {
+	width: 200px;
+	height: 100%;
+	background-color: #DDDDFF;
+}
+#myChart {
+	top: 0px;
+	left: 200px;
+	height: 100%;
+	width: 1000px;
+}
